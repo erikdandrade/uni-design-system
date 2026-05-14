@@ -2,9 +2,6 @@
   "name": "uni-design-system-docs",
   "type": "module",
   "version": "0.0.1",
-  "overrides": {
-    "vite": "^7"
-  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
