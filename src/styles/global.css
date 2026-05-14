@@ -1,0 +1,70 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+/* ─── UNI Design System tokens ─── */
+
+:root,
+::backdrop {
+  /* Brand accent: UNI green */
+  --sl-color-accent-low: #e8fcf3;
+  --sl-color-accent: #19b868;
+  --sl-color-accent-high: #16a25b;
+
+  /* Grays mapped from UNI neutral scale */
+  --sl-color-gray-1: #171717;
+  --sl-color-gray-2: #333333;
+  --sl-color-gray-3: #6b6b6b;
+  --sl-color-gray-4: #898989;
+  --sl-color-gray-5: #e0e0e0;
+  --sl-color-gray-6: #efefef;
+  --sl-color-gray-7: #f7f6f6;
+
+  /* Typography: Inter (UNI's typeface) */
+  --sl-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --sl-font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+}
+
+:root[data-theme='dark'],
+[data-theme='dark'] ::backdrop {
+  /* Brand accent: brighter green for dark backgrounds */
+  --sl-color-accent-low: #1c3328;
+  --sl-color-accent: #1ad678;
+  --sl-color-accent-high: #4ce599;
+
+  /* UNI dark neutral backgrounds */
+  --sl-color-bg: #252525;
+  --sl-color-bg-sidebar: #252525;
+  --sl-color-bg-nav: rgba(37, 37, 37, 0.9);
+
+  /* Grays mapped from UNI dark neutral scale */
+  --sl-color-gray-1: #f0f0f0;
+  --sl-color-gray-2: #dbdbdb;
+  --sl-color-gray-3: #ababab;
+  --sl-color-gray-4: #737373;
+  --sl-color-gray-5: #595959;
+  --sl-color-gray-6: #3a3a3a;
+  --sl-color-gray-7: #2b2b2b;
+}
+
+/* ─── Storybook embed sizing ─── */
+
+.storybook-embed {
+  margin: 1.5rem 0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.storybook-embed iframe {
+  display: block;
+  width: 100%;
+  min-height: 480px;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 6px;
+  background: #fff;
+}
+
+/* ─── Component tabs: ensure no gap between tab bar and page title ─── */
+
+.component-tabs + * {
+  margin-top: 0;
+}

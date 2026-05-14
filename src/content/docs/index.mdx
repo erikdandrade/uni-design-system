@@ -1,0 +1,33 @@
+---
+title: UNI Design System
+description: A comprehensive framework for designing consistent, scalable digital products at Unifonic.
+template: splash
+hero:
+  title: UNI Design System
+  tagline: A comprehensive framework for designers, developers, and stakeholders — the single source of truth for consistent, scalable digital products.
+  actions:
+    - text: Get started
+      link: /welcome-to-uni/
+      icon: right-arrow
+      variant: primary
+    - text: Browse components
+      link: /components/buttons/button/overview/
+      icon: open-book
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid stagger>
+  <Card title="Foundations" icon="pencil">
+    Colors, typography, spacing, radius, shadows, iconography, and design tokens.
+  </Card>
+  <Card title="Components" icon="puzzle">
+    Buttons, inputs, navigation, messaging, and layout components.
+  </Card>
+  <Card title="Usage guidelines" icon="document">
+    Best practices, accessibility guidance, and do/don't examples for every component.
+  </Card>
+  <Card title="Code references" icon="laptop">
+    Implementation snippets and live Storybook previews for every component.
+  </Card>
+</CardGrid>

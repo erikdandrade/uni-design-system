@@ -1,0 +1,129 @@
+---
+/**
+ * Overrides Starlight's PageTitle component.
+ * Renders a component tab bar (Overview / Usage / Structure / Code / Change Log)
+ * above the page title when the current page is a tab page.
+ */
+import Default from '@astrojs/starlight/components/PageTitle.astro';
+import { getCollection } from 'astro:content';
+
+const TAB_NAMES = ['overview', 'usage', 'structure', 'code', 'change-log'];
+const TAB_LABELS: Record<string, string> = {
+  overview: 'Overview',
+  usage: 'Usage',
+  structure: 'Structure',
+  code: 'Code',
+  'change-log': 'Change Log',
+};
+const TAB_ORDER: Record<string, number> = {
+  overview: 1,
+  usage: 2,
+  structure: 3,
+  code: 4,
+  'change-log': 5,
+};
+
+// Use the URL pathname to determine current page slug
+const pathname = Astro.url.pathname; // e.g. /components/buttons/button/overview/
+const slugParts = pathname.replace(/^\/|\/$/g, '').split('/').filter(Boolean);
+const currentTab = slugParts[slugParts.length - 1];
+const isTabPage = TAB_NAMES.includes(currentTab);
+
+let tabs: { name: string; label: string; href: string; active: boolean }[] = [];
+
+if (isTabPage) {
+  const parentParts = slugParts.slice(0, -1);
+  const parentPath = parentParts.join('/'); // e.g. components/buttons/button
+
+  const allDocs = await getCollection('docs');
+
+  const siblings = allDocs
+    .filter((doc) => {
+      const docParts = doc.id.split('/');
+      const docTab = docParts[docParts.length - 1];
+      const docParent = docParts.slice(0, -1).join('/');
+      return docParent === parentPath && TAB_NAMES.includes(docTab);
+    })
+    .sort((a, b) => {
+      const aTab = a.id.split('/').pop()!;
+      const bTab = b.id.split('/').pop()!;
+      return (TAB_ORDER[aTab] ?? 99) - (TAB_ORDER[bTab] ?? 99);
+    });
+
+  tabs = siblings.map((sibling) => {
+    const tabName = sibling.id.split('/').pop()!;
+    return {
+      name: tabName,
+      label: TAB_LABELS[tabName] ?? tabName,
+      href: `/${sibling.id}/`,
+      active: sibling.id.split('/').pop() === currentTab,
+    };
+  });
+}
+---
+
+{isTabPage && tabs.length > 1 && (
+  <div class="component-tabs">
+    <nav aria-label="Component sections">
+      {tabs.map((tab) => (
+        <a
+          href={tab.href}
+          class:list={['tab-link', { 'tab-active': tab.active }]}
+          aria-current={tab.active ? 'page' : undefined}
+        >
+          {tab.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+)}
+
+<Default {...Astro.props}><slot /></Default>
+
+<style>
+  .component-tabs {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+  }
+
+  .component-tabs nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+  }
+
+  .tab-link {
+    display: inline-block;
+    padding: 0.625rem 1.125rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--sl-color-gray-2);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .tab-link:hover {
+    color: var(--sl-color-white);
+    text-decoration: none;
+  }
+
+  .tab-active {
+    color: var(--sl-color-white);
+    border-bottom-color: var(--sl-color-accent);
+  }
+
+  :root[data-theme='light'] .tab-link {
+    color: var(--sl-color-gray-4);
+  }
+
+  :root[data-theme='light'] .tab-link:hover {
+    color: var(--sl-color-black);
+  }
+
+  :root[data-theme='light'] .tab-active {
+    color: var(--sl-color-black);
+  }
+</style>
