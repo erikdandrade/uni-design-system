@@ -1,3 +1,7 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # UNI Design System Documentation — Project Context
 
 ## What this project is
@@ -24,11 +28,14 @@ An Astro + Starlight documentation site for Unifonic's UNI design system. It rep
 ## Architecture
 
 ```
+Data/                             ← raw Supernova Markdown export (NOT rendered; reference only)
 src/
+├── content.config.ts             ← Starlight docs collection (tracked, despite being listed in .gitignore)
 ├── components/
 │   └── ComponentTabs.astro       ← overrides Starlight's PageTitle
 ├── content/
-│   └── docs/                     ← all content (109 pages)
+│   └── docs/                     ← all rendered content
+│       ├── index.mdx             ← splash homepage (hero + CardGrid)
 │       ├── welcome-to-uni.md
 │       ├── how-to-contribute.md
 │       ├── foundations/
@@ -53,6 +60,12 @@ astro.config.mjs                   ← Starlight config: sidebar, component over
 
 ## Key decisions and gotchas
 
+### `Data/` vs `src/content/docs/`
+`Data/` is the original Supernova export, kept as source material. Its filenames carry hash suffixes (`usage-TQwIAuxM.md`) and have no frontmatter. The migrated copies in `src/content/docs/` have clean names (`usage.md`) and frontmatter — tab detection in `ComponentTabs.astro` depends on those exact names. Edit content in `src/content/docs/`, never in `Data/`.
+
+### `src/content.config.ts` and `.gitignore`
+`.gitignore` lists `src/content.config.ts`, but the file is already tracked, so edits are still committed. Don't delete and recreate it — a new copy would be ignored and the build would lose the `docs` collection.
+
 ### Starlight v0.39 sidebar syntax
 `autogenerate` must be wrapped in an `items` array. The old syntax throws a config error:
 ```js
@@ -69,7 +82,7 @@ astro.config.mjs                   ← Starlight config: sidebar, component over
 Tab files use `sidebar: { hidden: true }` so only the overview appears in the sidebar. The overview file uses `sidebar: { label: "Component Name" }` to show the component name instead of "Overview".
 
 ### Storybook embeds
-The rehype plugin at `src/plugins/rehype-storybook-embed.mjs` detects `<a>` tags whose `href` contains `iframe.html` and rewrites them as `<iframe>` embeds with `.storybook-embed` wrapper styling.
+The rehype plugin at `src/plugins/rehype-storybook-embed.mjs` detects `<a>` tags whose `href` contains `/iframe.html` (e.g. a Markdown link `[Open Storybook Canvas](http://storybook.dev.unifonic.com…/iframe.html?…&id=…)`) and rewrites them as `<iframe>` embeds with `.storybook-embed` wrapper styling.
 
 ### Image paths
 All images are stored in `public/images/`. Paths in Markdown always start with `/images/filename.png`. The original Supernova CDN URLs were rewritten during migration.
@@ -141,3 +154,5 @@ yarn dev          # local preview at localhost:4321 (or next available port)
 yarn build        # production build
 yarn preview      # preview production build locally
 ```
+
+There is no test suite, linter, or `astro check` setup. `yarn build` is the verification step — it fails on bad frontmatter, broken sidebar config, or a missing content collection.
